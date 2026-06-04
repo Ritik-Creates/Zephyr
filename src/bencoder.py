@@ -63,3 +63,62 @@ def _encode_dict(value: dict) -> bytes:
 #     }
 # }
 # print(encoder(torrent))
+
+def decoder(data: bytes):
+
+    if not isinstance(data, bytes):
+        raise TypeError("The file data should be in bytes")
+
+    value, pos = _decode_value(data, 0)
+
+    if(pos!=len(data)):
+        raise ValueError("Unexpected data field encountered")
+
+    return value
+
+def _decode_value(data: bytes, pos: int):
+    identifier = data[pos:pos+1]
+    
+    if identifier == b"i":
+        return _decode_int(data, pos)
+    
+    if identifier.isdigit():
+        return _decode_strbytes(data,pos)
+    
+    if identifier == b"l":
+        return _decode_list(data, pos)
+    
+    if identifier == b"d":
+        return _decode_dictionary(data,pos)
+
+    raise ValueError(f"Invalid Token found at {pos}")
+
+def _decode_int(data: bytes, pos: int):
+    end = data.index(b"e", pos+1)
+    dataint = (data[pos+1:end]).decode()
+    if dataint == "-0":
+        raise ValueError("No negative zeros allowed in bencode")
+    if dataint != "0" and (dataint.lstrip("-")).startswith("0"):
+        raise ValueError("Leading zero not allowed in bencode")
+    return int(dataint), end+1
+
+def _decode_strbytes(data: bytes, pos: int):
+    colon = data.index(b":",pos)
+    length = int((data[pos:colon]).decode())
+    start = colon+1
+    end = start +length
+    if end > len(data):
+        raise ValueError("Data out of bounds")
+    return data[start:end],end
+
+def _decode_list(data:bytes, pos:int):
+    pass
+
+def _decode_dict(data:bytes, pos:int):
+    pass
+
+print(type(decoder(b"i42e")))
+print(decoder(b"i42e"))
+testa =b"5:apple"
+print(type(decoder(testa)))
+print(decoder(testa))
