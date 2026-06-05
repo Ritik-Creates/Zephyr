@@ -112,13 +112,36 @@ def _decode_strbytes(data: bytes, pos: int):
     return data[start:end],end
 
 def _decode_list(data:bytes, pos:int):
-    pass
+    result_list = []
+    pos = pos+1
+    while(data[pos:pos+1] != b"e"):
+        itemtoappend, pos = _decode_value(data, pos)
+        result_list.append(itemtoappend)
+    return result_list, pos+1
 
 def _decode_dict(data:bytes, pos:int):
-    pass
+    result_dict = {}
+    pos += 1
+    while(data[pos:pos+1] != b"e"):
+        keytoappend, pos = _decode_value(data, pos)
+        valuetoappend, pos = _decode_value(data, pos)
+        result_dict[keytoappend] = valuetoappend
+    return result_dict, pos+1
 
-print(type(decoder(b"i42e")))
-print(decoder(b"i42e"))
-testa =b"5:apple"
-print(type(decoder(testa)))
-print(decoder(testa))
+# decoder test
+#
+# print(type(decoder(b"i42e")))
+# print(decoder(b"i42e"))
+# testa =b"5:apple"
+# print(type(decoder(testa)))
+# print(decoder(testa))
+# print(decoder(b"li1ei2ee"))
+# print(decoder(b"d4:infod4:name10:ubuntu.iso6:lengthi1048576e12:piece lengthi262144e6:pieces20:abcdefghijklmnopqrste8:announce29:http://tracker.local/announce7:comment12:Test torrente"))
+
+with open("tests/ubuntu-26.04-desktop-amd64.iso.torrent", "rb") as f:
+    raw = f.read()
+
+decoded = decoder(raw)
+
+print(decoded.keys())
+print(decoded[b"info"].keys())
