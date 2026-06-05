@@ -4,3 +4,4 @@ venv/
 .env
 downloads/
 *.log
+*:Zone.Identifier
