@@ -89,7 +89,7 @@ def _decode_value(data: bytes, pos: int):
         return _decode_list(data, pos)
     
     if identifier == b"d":
-        return _decode_dictionary(data,pos)
+        return _decode_dict(data,pos)
 
     raise ValueError(f"Invalid Token found at {pos}")
 
