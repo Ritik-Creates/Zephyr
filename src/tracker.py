@@ -1,1 +1,3 @@
-import bencoder
+from bencoder import encoder
+from bencoder import decoder
+

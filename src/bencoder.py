@@ -106,7 +106,7 @@ def _decode_strbytes(data: bytes, pos: int):
     colon = data.index(b":",pos)
     length = int((data[pos:colon]).decode())
     start = colon+1
-    end = start +length
+    end = start + length
     if end > len(data):
         raise ValueError("Data out of bounds")
     return data[start:end],end
